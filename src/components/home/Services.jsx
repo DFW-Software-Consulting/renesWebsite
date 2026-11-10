@@ -1,5 +1,5 @@
 import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
-import { LuCloudRain, LuShrub, LuSprout, LuTreeDeciduous, LuWind } from 'react-icons/lu'
+import { LuCloudRain, LuFlower2, LuShrub, LuSprout, LuTreeDeciduous, LuWind } from 'react-icons/lu'
 import { MowerIcon } from '../Mower'
 import Reveal, { Eyebrow } from '../Reveal'
 import { QuoteButton } from '../Buttons'
@@ -10,9 +10,13 @@ const ICONS = {
   shrubs: LuShrub,
   trees: LuTreeDeciduous,
   cleanup: LuWind,
-  gutters: LuCloudRain,
+  gutters: LuCloudRain, LuFlower2,
   weeds: LuSprout,
+  flowerbeds: LuFlower2,
 }
+
+// Wide cards keep the grid balanced with 7 items (2+1 / 3 / 1+2 on desktop, 1 + 3x2 on tablet).
+const WIDE = { mowing: 'sm:col-span-2', flowerbeds: 'lg:col-span-2' }
 
 const spring = { stiffness: 260, damping: 22 }
 
@@ -77,7 +81,10 @@ export default function Services() {
     <section aria-labelledby="services-title" className="mx-auto max-w-6xl px-5 py-24 sm:px-8 sm:py-32">
       <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
         <Reveal>
-          <Eyebrow className="text-mower">What we do</Eyebrow>
+          <p aria-hidden="true" className="font-script text-mower mb-4 origin-left -rotate-2 text-3xl leading-[1.4] sm:text-4xl sm:leading-[1.4]">
+            Free quotes!
+          </p>
+          <Eyebrow className="text-mower mt-2">What we do</Eyebrow>
           <h2 id="services-title" className="font-display mt-4 text-5xl leading-[0.95] uppercase sm:text-7xl">
             Full-service yard care.
             <br />
@@ -91,7 +98,7 @@ export default function Services() {
 
       <ul className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((s, i) => (
-          <li key={s.id}>
+          <li key={s.id} className={WIDE[s.id]}>
             <ServiceCard service={s} index={i} />
           </li>
         ))}
