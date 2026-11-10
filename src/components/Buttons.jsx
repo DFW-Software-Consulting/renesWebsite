@@ -36,3 +36,17 @@ export function CallButton({ className = '', variant = 'light' }) {
     </motion.a>
   )
 }
+
+export function ExternalButton({ href, variant = 'outline', icon: Icon, className = '', children }) {
+  const look =
+    variant === 'outline'
+      ? 'border-2 border-white/80 text-white hover:bg-white hover:text-ink'
+      : 'text-white/80 hover:bg-white/10 hover:text-white'
+  return (
+    <motion.a href={href} target="_blank" rel="noopener noreferrer" className={`${base} ${look} ${className}`} {...press}>
+      {Icon && <Icon aria-hidden="true" className="relative size-5" />}
+      <span className="relative">{children}</span>
+      <span className="sr-only"> (opens in a new tab)</span>
+    </motion.a>
+  )
+}
