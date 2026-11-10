@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { LuArrowLeft, LuArrowRight, LuQuote } from 'react-icons/lu'
 import Reveal, { Eyebrow } from '../Reveal'
-import { testimonials } from '../../data/site'
+import { FaFacebook } from 'react-icons/fa'
+import { ExternalButton } from '../Buttons'
+import { testimonials, business } from '../../data/site'
 
 export default function Testimonials() {
   const [index, setIndex] = useState(0)
@@ -114,6 +116,15 @@ export default function Testimonials() {
               </div>
             )}
           </div>
+        </Reveal>
+
+        <Reveal delay={0.2} className="mt-10 flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center">
+          <ExternalButton href={business.facebookReviewsUrl} icon={FaFacebook}>
+            See reviews on Facebook
+          </ExternalButton>
+          <ExternalButton href={business.facebookReviewsUrl} variant="ghost">
+            Leave a review
+          </ExternalButton>
         </Reveal>
       </div>
     </section>

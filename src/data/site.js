@@ -10,6 +10,7 @@ export const business = {
   email: 'mowtopflight@gmail.com',
   emailHref: 'mailto:mowtopflight@gmail.com',
   facebook: 'https://www.facebook.com/profile.php?id=100086916005109&mibextid=LQQJ4d',
+  facebookReviewsUrl: 'https://www.facebook.com/profile.php?id=100086916005109&sk=reviews',
 }
 
 export const services = [
