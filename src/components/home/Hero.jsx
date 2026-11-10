@@ -19,7 +19,6 @@ const word = {
 }
 
 function KineticHeadline() {
-  let i = 0
   return (
     <motion.h1
       id="hero-title"
@@ -31,9 +30,8 @@ function KineticHeadline() {
       {LINES.map((line, li) => (
         <span key={li} className="block">
           {line.words.map((w, wi) => {
-            i += 1
             return (
-              <Fragment key={w + i}>
+              <Fragment key={`${li}-${wi}-${w}`}>
                 {/* Real spaces between words and lines so the heading reads correctly as text. */}
                 {wi > 0 && ' '}
                 <span className="inline-block overflow-hidden pb-[0.06em] align-bottom">

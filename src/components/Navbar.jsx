@@ -31,7 +31,11 @@ export default function Navbar() {
   useMotionValueEvent(scrollY, 'change', (y) => setScrolled(y > 24))
 
   // Close the menu whenever the route changes.
-  useEffect(() => setOpen(false), [pathname])
+  const [openPath, setOpenPath] = useState(pathname)
+  if (openPath !== pathname) {
+    setOpenPath(pathname)
+    setOpen(false)
+  }
 
   // While open: lock scroll, move focus into the menu, close on Escape, trap Tab.
   useEffect(() => {

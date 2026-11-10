@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { useReducedMotion as useMotionReducedMotion } from 'motion/react'
+
+const subscribeNoop = () => () => {}
 
 /** False during SSR and the hydration render, true after mount. */
 export function useMounted() {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  return mounted
+  return useSyncExternalStore(subscribeNoop, () => true, () => false)
 }
 
 /**
