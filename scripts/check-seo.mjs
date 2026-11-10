@@ -5,6 +5,7 @@ import path from 'node:path'
 
 const SITE = 'https://tfls.dfwsc.com'
 const dist = path.resolve(process.argv[2] ?? path.join(import.meta.dirname, '..', 'dist'))
+const onSite = (url) => url === SITE || url.startsWith(`${SITE}/`)
 const errors = []
 const fail = (where, msg) => errors.push(`${where}: ${msg}`)
 
@@ -22,7 +23,7 @@ else {
   if (locs.length === 0) fail('sitemap.xml', 'lists no URLs')
   if (new Set(locs).size !== locs.length) fail('sitemap.xml', 'contains duplicate URLs')
   for (const loc of locs) {
-    if (!loc.startsWith(SITE)) fail('sitemap.xml', `URL not on ${SITE}: ${loc}`)
+    if (!onSite(loc)) fail('sitemap.xml', `URL not on ${SITE}: ${loc}`)
     routes.push(new URL(loc).pathname)
   }
 }
@@ -32,13 +33,12 @@ if (read('404.html') === null) fail('404.html', 'missing from dist')
 
 const attr = (tag, name) => tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1]
 const metas = (html) => [...html.matchAll(/<meta\b[^>]*>/g)].map((m) => m[0])
-const hasType = (node, re) => {
-  if (Array.isArray(node)) return node.some((n) => hasType(n, re))
-  if (node && typeof node === 'object') {
-    const t = [node['@type']].flat().filter(Boolean)
-    return t.some((x) => re.test(x)) || Object.values(node).some((v) => hasType(v, re))
-  }
-  return false
+// Every @type value anywhere in a JSON-LD document.
+const collectTypes = (node, out = []) => {
+  if (node === null || typeof node !== 'object') return out
+  if (node['@type']) out.push(...[node['@type']].flat())
+  Object.values(node).forEach((v) => collectTypes(v, out))
+  return out
 }
 const BANNED = /^(AggregateRating|Review|Rating)$/
 
@@ -68,7 +68,7 @@ for (const route of routes) {
   const canonical = html.match(/<link\b[^>]*rel="canonical"[^>]*>/)?.[0]
   const href = canonical && attr(canonical, 'href')
   if (!href) fail(where, 'missing canonical link')
-  else if (!href.startsWith(SITE)) fail(where, `canonical must start with ${SITE}, got ${href}`)
+  else if (!onSite(href)) fail(where, `canonical must start with ${SITE}, got ${href}`)
 
   const og = attr(prop('og:image') ?? '', 'content')
   if (!og) fail(where, 'missing og:image')
@@ -78,7 +78,7 @@ for (const route of routes) {
   blocks.forEach((b, i) => {
     try {
       const data = JSON.parse(b[1])
-      if (hasType(data, BANNED)) fail(where, `JSON-LD block ${i + 1} contains AggregateRating/Review markup`)
+      if (collectTypes(data).some((t) => BANNED.test(t))) fail(where, `JSON-LD block ${i + 1} contains AggregateRating/Review markup`)
     } catch (e) {
       fail(where, `JSON-LD block ${i + 1} is not valid JSON (${e.message})`)
     }
