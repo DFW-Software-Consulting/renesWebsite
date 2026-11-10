@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { motion, useScroll, useTransform } from 'motion/react'
 import { LuHandshake, LuMapPin, LuSparkles } from 'react-icons/lu'
 import yard from '../assets/yard.webp'
 import logo from '../assets/logo-large.webp'
@@ -8,6 +8,7 @@ import Reveal, { Eyebrow } from '../components/Reveal'
 import CtaBand from '../components/home/CtaBand'
 import Gallery from '../components/home/Gallery'
 import { business, services } from '../data/site'
+import { useReducedMotion } from '../lib/hooks'
 
 const values = [
   {
@@ -37,12 +38,6 @@ export default function About() {
 
   return (
     <>
-      <title>About | Top Flight Lawn Services</title>
-      <meta
-        name="description"
-        content="Top Flight Lawn Services is a trusted, locally owned Dallas lawn care company led by owner Rene Guillen."
-      />
-
       <section aria-labelledby="about-title" className="relative isolate overflow-hidden px-5 pt-36 pb-20 sm:px-8 sm:pt-44">
         <StripedD
           className="pointer-events-none absolute -top-10 -right-28 -z-10 w-[min(90vw,560px)] opacity-15"
@@ -61,7 +56,7 @@ export default function About() {
               <span key={line} className="block overflow-hidden pb-[0.05em]">
                 <motion.span variants={heading} className={`block ${i === 2 ? 'text-mower' : ''}`}>
                   {line}
-                </motion.span>
+                </motion.span>{' '}
               </span>
             ))}
           </motion.h1>

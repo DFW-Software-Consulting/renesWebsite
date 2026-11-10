@@ -1,10 +1,11 @@
 import { useRef } from 'react'
 import { Link } from 'react-router'
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { motion, useScroll, useTransform } from 'motion/react'
 import { LuArrowUpRight, LuBadgeCheck } from 'react-icons/lu'
 import hedges from '../../assets/hedges.webp'
 import Reveal, { Eyebrow } from '../Reveal'
 import { business, trustBadges } from '../../data/site'
+import { useReducedMotion } from '../../lib/hooks'
 
 export default function AboutTeaser() {
   const ref = useRef(null)

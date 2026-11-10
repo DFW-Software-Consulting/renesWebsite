@@ -1,16 +1,60 @@
 import { useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import { LuArrowLeft, LuArrowRight, LuQuote } from 'react-icons/lu'
 import Reveal, { Eyebrow } from '../Reveal'
 import { FaFacebook } from 'react-icons/fa'
 import { ExternalButton } from '../Buttons'
 import { testimonials, business } from '../../data/site'
+import { useReducedMotion } from '../../lib/hooks'
+
+const KEY_STEPS = { ArrowRight: 1, ArrowLeft: -1 }
+
+const vis = (delay) => ({ delay })
+const SLIDE_SHOWN = { opacity: 1, y: 0, visibility: 'visible' }
+const slideHidden = (y) => ({ opacity: 0, y, visibility: 'hidden' })
+// Indexed by (reduce ? 2 : 0) + (active ? 1 : 0).
+const SLIDE_STATES = [
+  { animate: slideHidden(20), transition: { duration: 0.4, delay: 0, visibility: vis(0.4) } },
+  { animate: SLIDE_SHOWN, transition: { duration: 0.4, delay: 0.2, visibility: vis(0) } },
+  { animate: slideHidden(0), transition: { duration: 0.01, delay: 0, visibility: vis(0) } },
+  { animate: SLIDE_SHOWN, transition: { duration: 0.01, delay: 0, visibility: vis(0) } },
+]
+const slideMotion = (active, reduce) => SLIDE_STATES[(reduce ? 2 : 0) + (active ? 1 : 0)]
+
+function Slide({ review: r, active, reduce }) {
+  return (
+    <motion.figure
+      aria-hidden={!active || undefined}
+      inert={!active}
+      className="[grid-area:1/1]"
+      initial={false}
+      {...slideMotion(active, reduce)}
+    >
+      <blockquote className="text-xl leading-relaxed font-medium text-white/90 sm:text-2xl sm:leading-relaxed">
+        &ldquo;{r.quote}&rdquo;
+      </blockquote>
+      <figcaption className="mt-8 flex items-center gap-4">
+        <span className="bg-mower font-display grid size-12 place-items-center rounded-full text-xl" aria-hidden="true">
+          {r.name[0]}
+        </span>
+        <span>
+          <span className="font-display block text-xl tracking-wide uppercase">{r.name}</span>
+          <span className="text-sm text-white/60">{r.source || 'Top Flight client'}</span>
+        </span>
+      </figcaption>
+    </motion.figure>
+  )
+}
 
 export default function Testimonials() {
   const [index, setIndex] = useState(0)
   const reduce = useReducedMotion()
   const count = testimonials.length
   const go = (d) => setIndex((i) => (i + d + count) % count)
+  const onKeyDown = (e) => {
+    const step = count > 1 ? KEY_STEPS[e.key] : undefined
+    if (step) go(step)
+  }
 
   return (
     <section aria-labelledby="reviews-title" className="relative overflow-hidden py-24 sm:py-32">
@@ -41,44 +85,12 @@ export default function Testimonials() {
             aria-label="Customer reviews"
             aria-live="polite"
             tabIndex={count > 1 ? 0 : undefined}
-            onKeyDown={(e) => {
-              if (count < 2) return
-              if (e.key === 'ArrowRight') go(1)
-              else if (e.key === 'ArrowLeft') go(-1)
-            }}
+            onKeyDown={onKeyDown}
             className="relative rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 backdrop-blur sm:p-14">
             <div className="grid">
-              {testimonials.map((r, i) => {
-                const active = i === index
-                return (
-                  <motion.figure
-                    key={r.name}
-                    aria-hidden={!active || undefined}
-                    inert={!active}
-                    className="[grid-area:1/1]"
-                    initial={false}
-                    animate={{ opacity: active ? 1 : 0, y: active ? 0 : reduce ? 0 : 20, visibility: active ? 'visible' : 'hidden' }}
-                    transition={{
-                      duration: reduce ? 0.01 : 0.4,
-                      delay: active && !reduce ? 0.2 : 0,
-                      visibility: { delay: active ? 0 : reduce ? 0 : 0.4 },
-                    }}
-                  >
-                    <blockquote className="text-xl leading-relaxed font-medium text-white/90 sm:text-2xl sm:leading-relaxed">
-                      &ldquo;{r.quote}&rdquo;
-                    </blockquote>
-                    <figcaption className="mt-8 flex items-center gap-4">
-                      <span className="bg-mower font-display grid size-12 place-items-center rounded-full text-xl" aria-hidden="true">
-                        {r.name[0]}
-                      </span>
-                      <span>
-                        <span className="font-display block text-xl tracking-wide uppercase">{r.name}</span>
-                        <span className="text-sm text-white/60">{r.source || 'Top Flight client'}</span>
-                      </span>
-                    </figcaption>
-                  </motion.figure>
-                )
-              })}
+              {testimonials.map((r, i) => (
+                <Slide key={r.name} review={r} active={i === index} reduce={reduce} />
+              ))}
             </div>
 
             {count > 1 && (

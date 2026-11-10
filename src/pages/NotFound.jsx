@@ -1,14 +1,13 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import Mower from '../components/Mower'
 import { CallButton, QuoteButton } from '../components/Buttons'
 import { Link } from 'react-router'
+import { useReducedMotion } from '../lib/hooks'
 
 export default function NotFound() {
   const reduce = useReducedMotion()
   return (
     <>
-      <title>Page not found | Top Flight Lawn Services</title>
-      <meta name="robots" content="noindex" />
       <section aria-labelledby="nf-title" className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-5 pt-32 pb-20 text-center">
         <p aria-hidden="true" className="font-display text-outline text-[clamp(8rem,40vw,22rem)] leading-none opacity-30 select-none">
           404

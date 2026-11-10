@@ -88,12 +88,6 @@ export default function Contact() {
 
   return (
     <>
-      <title>Contact | Top Flight Lawn Services</title>
-      <meta
-        name="description"
-        content="Get a free lawn care quote from Top Flight Lawn Services in Dallas. Call 214-779-4259 or send a message."
-      />
-
       <section aria-labelledby="contact-title" className="relative isolate overflow-hidden px-5 pt-36 pb-24 sm:px-8 sm:pt-44">
         <div aria-hidden="true" className="bg-mower/25 absolute -top-40 -left-40 -z-10 size-[36rem] rounded-full blur-3xl" />
         <div className="mx-auto max-w-6xl">

@@ -4,7 +4,7 @@ import Reveal, { Eyebrow } from '../Reveal'
 import { workPhotos } from '../../data/site'
 
 /** Drag (or arrow-key) comparison slider. Uses a native range input for a11y. */
-export function BeforeAfter({ before, after, alt, className = '' }) {
+function BeforeAfter({ before, after, alt, className = '' }) {
   const [pos, setPos] = useState(50)
   return (
     <div className={`relative isolate overflow-hidden select-none ${className}`}>

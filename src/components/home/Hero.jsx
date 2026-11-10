@@ -1,10 +1,11 @@
-import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { Fragment, useRef } from 'react'
+import { motion, useScroll, useTransform } from 'motion/react'
 import lawn from '../../assets/lawn.webp'
 import Mower from '../Mower'
 import StripedD from '../StripedD'
 import { CallButton, QuoteButton } from '../Buttons'
 import { trustBadges } from '../../data/site'
+import { useReducedMotion } from '../../lib/hooks'
 
 const LINES = [
   { words: ['Lawns', 'that'] },
@@ -18,7 +19,6 @@ const word = {
 }
 
 function KineticHeadline() {
-  let i = 0
   return (
     <motion.h1
       id="hero-title"
@@ -29,21 +29,24 @@ function KineticHeadline() {
     >
       {LINES.map((line, li) => (
         <span key={li} className="block">
-          {line.words.map((w) => {
-            i += 1
+          {line.words.map((w, wi) => {
             return (
-              <span key={w + i} className="mr-[0.18em] inline-block overflow-hidden pb-[0.06em] align-bottom last:mr-0">
-                <motion.span
-                  variants={word}
-                  className={`inline-block origin-bottom-left ${line.accent ? 'text-mower' : ''} ${
-                    line.outline ? 'text-outline' : ''
-                  }`}
-                >
-                  {w}
-                </motion.span>
-              </span>
+              <Fragment key={`${li}-${wi}-${w}`}>
+                {/* Real spaces between words and lines so the heading reads correctly as text. */}
+                {wi > 0 && ' '}
+                <span className="inline-block overflow-hidden pb-[0.06em] align-bottom">
+                  <motion.span
+                    variants={word}
+                    className={`inline-block origin-bottom-left ${line.accent ? 'text-mower' : ''} ${
+                      line.outline ? 'text-outline' : ''
+                    }`}
+                  >
+                    {w}
+                  </motion.span>
+                </span>
+              </Fragment>
             )
-          })}
+          })}{' '}
         </span>
       ))}
     </motion.h1>
@@ -120,9 +123,10 @@ export default function Hero() {
 
         <KineticHeadline />
 
+        {/* Slide only (no fade) so the intro paints with the prerendered HTML: it's the LCP text. */}
         <motion.p
           className="mt-8 max-w-xl text-lg text-white/80 sm:text-xl"
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.7 }}
         >
