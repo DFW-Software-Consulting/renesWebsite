@@ -1,6 +1,6 @@
 // Per-route metadata and JSON-LD. Used at build time (prerender) to write <head>,
 // and on the client to keep <head> in sync after SPA navigation.
-import { SITE_URL, business, faqs, serviceBySlug, servicePath, services } from './data/site'
+import { SITE_URL, business, faqs, serviceBySlug, servicePath, services, tagline } from './data/site'
 
 const BUSINESS_ID = `${SITE_URL}/#business`
 const WEBSITE_ID = `${SITE_URL}/#website`
@@ -25,7 +25,7 @@ function businessEntity() {
     additionalType: 'https://en.wikipedia.org/wiki/Lawn_care',
     name: business.name,
     description: business.description,
-    slogan: 'High-quality lawn & home maintenance at the best prices',
+    slogan: tagline,
     url: `${SITE_URL}/`,
     logo: { '@type': 'ImageObject', url: `${SITE_URL}/apple-touch-icon.png`, width: 180, height: 180 },
     image: OG_IMAGE.url,
@@ -99,99 +99,96 @@ const NOT_FOUND = {
   noindex: true,
 }
 
-export function getPageMeta(pathname) {
-  const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
-  let meta
+const servicesBreadcrumb = [
+  { name: 'Home', path: '/' },
+  { name: 'Services', path: '/services' },
+]
 
-  if (path === '/') {
-    meta = {
-      title: `${business.name} | Dallas Lawn Care & Free Quotes`,
-      description:
-        'Locally owned Dallas lawn care: mowing, shrub and tree trimming, clean-ups and leaf pick-up, gutter cleaning, weed control, and flowerbeds. Call 214-779-4259 for a free quote.',
-      jsonLd: graph(faqPage('/', faqs)),
-    }
-  } else if (path === '/about') {
-    meta = {
-      title: brand('About Us: Locally Owned Dallas Lawn Care'),
-      description:
-        'Top Flight Lawn Services is a locally owned Dallas lawn care company led by owner Rene Guillen, serving residential and commercial properties. Free quotes.',
-      jsonLd: graph(),
-    }
-  } else if (path === '/contact') {
-    meta = {
-      title: brand('Contact Us for a Free Quote'),
-      description:
-        'Get a free lawn care quote in Dallas, TX. Call Top Flight Lawn Services at 214-779-4259, email mowtopflight@gmail.com, or send a message.',
-      jsonLd: graph(),
-    }
-  } else if (path === '/services') {
-    meta = {
-      title: brand('Lawn Care Services in Dallas, TX'),
-      description:
-        'Lawn mowing, shrub and tree trimming, clean-ups and leaf pick-up, gutter cleaning, weed control, and flowerbeds and mulch in Dallas, TX. Residential and commercial. Free quotes.',
-      jsonLd: graph(
-        breadcrumbs('/services', [
-          { name: 'Home', path: '/' },
-          { name: 'Services', path: '/services' },
-        ]),
-      ),
-    }
-  } else if (path.startsWith('/services/')) {
-    const s = serviceBySlug(path.slice('/services/'.length))
-    if (s) {
-      meta = {
-        title: brand(`${s.title} in Dallas, TX`),
-        description: s.metaDescription,
-        jsonLd: graph(
-          {
-            '@type': 'Service',
-            '@id': serviceId(s),
-            name: `${s.title} in Dallas, TX`,
-            serviceType: s.serviceType,
-            description: s.intro,
-            url: abs(path),
-            provider: { '@id': BUSINESS_ID },
-            areaServed: dallas,
-            audience: { '@type': 'Audience', audienceType: 'Residential and commercial property owners' },
-          },
-          breadcrumbs(path, [
-            { name: 'Home', path: '/' },
-            { name: 'Services', path: '/services' },
-            { name: s.title, path },
-          ]),
-          faqPage(path, s.faqs),
-        ),
-      }
-    }
+// Static routes: each builds its own meta.
+const STATIC_PAGES = {
+  '/': () => ({
+    title: `${business.name} | Dallas Lawn Care & Free Quotes`,
+    description:
+      'Locally owned Dallas lawn care: mowing, shrub and tree trimming, clean-ups and leaf pick-up, gutter cleaning, weed control, and flowerbeds. Call 214-779-4259 for a free quote.',
+    jsonLd: graph(faqPage('/', faqs)),
+  }),
+  '/about': () => ({
+    title: brand('About Us: Locally Owned Dallas Lawn Care'),
+    description:
+      'Top Flight Lawn Services is a locally owned Dallas lawn care company led by owner Rene Guillen, serving residential and commercial properties. Free quotes.',
+    jsonLd: graph(),
+  }),
+  '/contact': () => ({
+    title: brand('Contact Us for a Free Quote'),
+    description:
+      'Get a free lawn care quote in Dallas, TX. Call Top Flight Lawn Services at 214-779-4259, email mowtopflight@gmail.com, or send a message.',
+    jsonLd: graph(),
+  }),
+  '/services': () => ({
+    title: brand('Lawn Care Services in Dallas, TX'),
+    description:
+      'Lawn mowing, shrub and tree trimming, clean-ups and leaf pick-up, gutter cleaning, weed control, and flowerbeds and mulch in Dallas, TX. Residential and commercial. Free quotes.',
+    jsonLd: graph(breadcrumbs('/services', servicesBreadcrumb)),
+  }),
+}
+
+function serviceMeta(path) {
+  const s = serviceBySlug(path.slice('/services/'.length))
+  if (!s) return null
+  return {
+    title: brand(`${s.title} in Dallas, TX`),
+    description: s.metaDescription,
+    jsonLd: graph(
+      {
+        '@type': 'Service',
+        '@id': serviceId(s),
+        name: `${s.title} in Dallas, TX`,
+        serviceType: s.serviceType,
+        description: s.intro,
+        url: abs(path),
+        provider: { '@id': BUSINESS_ID },
+        areaServed: dallas,
+        audience: { '@type': 'Audience', audienceType: 'Residential and commercial property owners' },
+      },
+      breadcrumbs(path, [...servicesBreadcrumb, { name: s.title, path }]),
+      faqPage(path, s.faqs),
+    ),
   }
+}
 
-  if (!meta) return { ...NOT_FOUND, jsonLd: null, canonical: null }
-  return { ...meta, canonical: abs(path), noindex: false }
+const normalize = (pathname) => (pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname)
+
+// Paths always start with "/", so they can't collide with Object.prototype keys.
+const metaFor = (path) => STATIC_PAGES[path]?.() ?? (path.startsWith('/services/') ? serviceMeta(path) : null)
+
+export function getPageMeta(pathname) {
+  const path = normalize(pathname)
+  const meta = metaFor(path)
+  return meta ? { ...meta, canonical: abs(path), noindex: false } : { ...NOT_FOUND, jsonLd: null, canonical: null }
 }
 
 const esc = (v) =>
   String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 // `<` is escaped so a string in the data can never close the script tag.
-export const jsonLdString = (data) => JSON.stringify(data).replace(/</g, '\\u003c')
+const jsonLdString = (data) => JSON.stringify(data).replace(/</g, '\\u003c')
+
+// A tag when `value` is set, otherwise nothing.
+const optional = (value, tag) => (value ? [tag(value)] : [])
 
 /** Head tags for the prerendered HTML. */
 export function renderHead(meta) {
   const tags = [
     `<title>${esc(meta.title)}</title>`,
     `<meta name="description" content="${esc(meta.description)}" />`,
-  ]
-  if (meta.noindex) tags.push('<meta name="robots" content="noindex" />')
-  if (meta.canonical) tags.push(`<link rel="canonical" href="${meta.canonical}" />`)
-  tags.push(
+    ...optional(meta.noindex, () => '<meta name="robots" content="noindex" />'),
+    ...optional(meta.canonical, (c) => `<link rel="canonical" href="${c}" />`),
     `<meta property="og:type" content="website" />`,
     `<meta property="og:site_name" content="${esc(business.name)}" />`,
     `<meta property="og:locale" content="en_US" />`,
     `<meta property="og:title" content="${esc(meta.title)}" />`,
     `<meta property="og:description" content="${esc(meta.description)}" />`,
-  )
-  if (meta.canonical) tags.push(`<meta property="og:url" content="${meta.canonical}" />`)
-  tags.push(
+    ...optional(meta.canonical, (c) => `<meta property="og:url" content="${c}" />`),
     `<meta property="og:image" content="${OG_IMAGE.url}" />`,
     `<meta property="og:image:width" content="${OG_IMAGE.width}" />`,
     `<meta property="og:image:height" content="${OG_IMAGE.height}" />`,
@@ -200,8 +197,8 @@ export function renderHead(meta) {
     `<meta name="twitter:title" content="${esc(meta.title)}" />`,
     `<meta name="twitter:description" content="${esc(meta.description)}" />`,
     `<meta name="twitter:image" content="${OG_IMAGE.url}" />`,
-  )
-  if (meta.jsonLd) tags.push(`<script type="application/ld+json">${jsonLdString(meta.jsonLd)}</script>`)
+    ...optional(meta.jsonLd, (d) => `<script type="application/ld+json">${jsonLdString(d)}</script>`),
+  ]
   return tags.join('\n    ')
 }
 

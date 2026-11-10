@@ -1,20 +1,12 @@
 import { Link, useParams } from 'react-router'
-import { motion } from 'motion/react'
 import { LuArrowUpRight, LuBuilding2, LuCheck, LuHouse } from 'react-icons/lu'
-import Breadcrumbs from '../components/Breadcrumbs'
+import PageHero from '../components/services/PageHero'
 import Reveal, { Eyebrow } from '../components/Reveal'
-import { CallButton, QuoteButton } from '../components/Buttons'
 import { FaqList } from '../components/Faq'
 import { SERVICE_ICONS } from '../components/home/Services'
 import CtaBand from '../components/home/CtaBand'
 import NotFound from './NotFound'
 import { business, serviceById, serviceBySlug, servicePath } from '../data/site'
-
-const fadeUp = (delay = 0, fade = true) => ({
-  initial: fade ? { opacity: 0, y: 24 } : { y: 24 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] },
-})
 
 export default function ServicePage() {
   const { slug } = useParams()
@@ -39,38 +31,32 @@ export default function ServicePage() {
 
   return (
     <>
-      <section aria-labelledby="service-title" className="relative isolate overflow-hidden px-5 pt-36 pb-20 sm:px-8 sm:pt-44">
-        <div aria-hidden="true" className="bg-mower/20 absolute -top-40 -left-40 -z-10 size-[36rem] rounded-full blur-3xl" />
-        <div className="mx-auto max-w-6xl">
-          <Breadcrumbs
-            items={[
-              { name: 'Home', path: '/' },
-              { name: 'Services', path: '/services' },
-              { name: service.title, path },
-            ]}
-          />
+      <PageHero
+        titleId="service-title"
+        glow="left"
+        padBottom="md"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Services', path: '/services' },
+          { name: service.title, path },
+        ]}
+        lead={
           <div className="mt-8 flex items-center gap-4">
             <span className="bg-mower grid size-12 place-items-center rounded-2xl text-white shadow-lg shadow-black/40">
               <Icon aria-hidden="true" className="size-6" />
             </span>
             <Eyebrow className="text-mower">Free quotes &middot; {business.city}</Eyebrow>
           </div>
-          <motion.h1
-            id="service-title"
-            className="font-display mt-6 max-w-5xl text-[clamp(3rem,10vw,7rem)] leading-[0.9] text-balance uppercase"
-            {...fadeUp()}
-          >
+        }
+        headingClassName="max-w-5xl text-balance"
+        heading={
+          <>
             {service.title} in <span className="text-mower">Dallas, TX</span>
-          </motion.h1>
-          <motion.p className="mt-6 max-w-2xl text-lg text-white/80 sm:text-xl" {...fadeUp(0.15, false)}>
-            {service.intro}
-          </motion.p>
-          <motion.div className="mt-10 flex flex-col gap-3 sm:flex-row" {...fadeUp(0.25)}>
-            <QuoteButton />
-            <CallButton />
-          </motion.div>
-        </div>
-      </section>
+          </>
+        }
+      >
+        {service.intro}
+      </PageHero>
 
       <div className="mx-auto grid max-w-6xl gap-6 px-5 pb-24 sm:px-8 lg:grid-cols-2">
         <section aria-labelledby="included-title" className="bg-ink-2 relative overflow-hidden rounded-[2rem] border border-white/10 p-8 sm:p-10">
