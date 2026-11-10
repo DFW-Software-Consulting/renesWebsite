@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
+import { useReducedMotion } from '../lib/hooks'
 
 const ease = [0.76, 0, 0.24, 1]
 

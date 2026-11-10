@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import { LuArrowLeft, LuArrowRight, LuQuote } from 'react-icons/lu'
 import Reveal, { Eyebrow } from '../Reveal'
 import { FaFacebook } from 'react-icons/fa'
 import { ExternalButton } from '../Buttons'
 import { testimonials, business } from '../../data/site'
+import { useReducedMotion } from '../../lib/hooks'
 
 export default function Testimonials() {
   const [index, setIndex] = useState(0)

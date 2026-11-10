@@ -1,16 +1,18 @@
-import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
+import { Link } from 'react-router'
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'motion/react'
 import { LuCloudRain, LuFlower2, LuShrub, LuSprout, LuTreeDeciduous, LuWind } from 'react-icons/lu'
 import { MowerIcon } from '../Mower'
 import Reveal, { Eyebrow } from '../Reveal'
 import { QuoteButton } from '../Buttons'
-import { services } from '../../data/site'
+import { servicePath, services } from '../../data/site'
+import { useReducedMotion } from '../../lib/hooks'
 
 const ICONS = {
   mowing: MowerIcon,
   shrubs: LuShrub,
   trees: LuTreeDeciduous,
   cleanup: LuWind,
-  gutters: LuCloudRain, LuFlower2,
+  gutters: LuCloudRain,
   weeds: LuSprout,
   flowerbeds: LuFlower2,
 }
@@ -20,7 +22,9 @@ const WIDE = { mowing: 'sm:col-span-2', flowerbeds: 'lg:col-span-2' }
 
 const spring = { stiffness: 260, damping: 22 }
 
-function ServiceCard({ service, index }) {
+export const SERVICE_ICONS = ICONS
+
+function ServiceCard({ service, index, headingAs: Heading = 'h3' }) {
   const reduce = useReducedMotion()
   const px = useMotionValue(0.5)
   const py = useMotionValue(0.5)
@@ -52,25 +56,34 @@ function ServiceCard({ service, index }) {
         onPointerMove={onMove}
         onPointerLeave={onLeave}
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-        className="group bg-ink-2 hover:border-mower/60 relative h-full overflow-hidden rounded-3xl border border-white/10 p-7 transition-colors sm:p-8"
+        className="group bg-ink-2 hover:border-mower/60 relative isolate h-full overflow-hidden rounded-3xl border border-white/10 p-7 transition-colors sm:p-8"
       >
-        <motion.div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: glow }} />
+        <motion.div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10" style={{ background: glow }} />
         <div
           aria-hidden="true"
           className="bg-mow-stripes absolute inset-x-0 bottom-0 h-1.5 origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
         />
         <div className="relative flex items-start justify-between" style={{ transform: 'translateZ(40px)' }}>
           <span className="bg-mower grid size-14 place-items-center rounded-2xl text-white shadow-lg shadow-black/40 transition-transform duration-500 group-hover:-rotate-6">
-            <Icon className="size-7" />
+            <Icon aria-hidden="true" className="size-7" />
           </span>
           <span aria-hidden="true" className="font-display text-5xl text-white/10">
             {String(index + 1).padStart(2, '0')}
           </span>
         </div>
-        <h3 className="font-display relative mt-8 text-3xl tracking-wide text-balance uppercase" style={{ transform: 'translateZ(30px)' }}>
-          {service.title}
-        </h3>
+        <Heading className="font-display mt-8 text-3xl tracking-wide text-balance uppercase">
+          {/* Stretched link: the whole card is clickable, the accessible name stays the service title. */}
+          <Link
+            to={servicePath(service)}
+            className="after:absolute after:inset-0 after:z-10 after:rounded-3xl after:content-[''] focus-visible:outline-none focus-visible:after:outline-[3px] focus-visible:after:outline-offset-[-3px] focus-visible:after:outline-turf focus-visible:after:outline-solid"
+          >
+            {service.title}
+          </Link>
+        </Heading>
         <p className="relative mt-3 text-white/70">{service.blurb}</p>
+        <p aria-hidden="true" className="text-mower relative mt-5 text-sm font-extrabold tracking-wide uppercase">
+          Learn more <span className="inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
+        </p>
       </motion.article>
     </Reveal>
   )
@@ -96,13 +109,28 @@ export default function Services() {
         </Reveal>
       </div>
 
-      <ul className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((s, i) => (
-          <li key={s.id} className={WIDE[s.id]}>
-            <ServiceCard service={s} index={i} />
-          </li>
-        ))}
-      </ul>
+      <ServiceGrid className="mt-14" />
+      <Reveal className="mt-10 text-center">
+        <Link
+          to="/services"
+          className="hover:text-mower inline-flex items-center gap-2 text-lg font-extrabold uppercase underline decoration-2 underline-offset-8 transition-colors"
+        >
+          See all lawn care services
+        </Link>
+      </Reveal>
     </section>
+  )
+}
+
+/** The 7 service cards, each linking to its service page. */
+export function ServiceGrid({ className = '', headingAs }) {
+  return (
+    <ul className={`grid gap-5 sm:grid-cols-2 lg:grid-cols-3 ${className}`}>
+      {services.map((s, i) => (
+        <li key={s.id} className={WIDE[s.id]}>
+          <ServiceCard service={s} index={i} headingAs={headingAs} />
+        </li>
+      ))}
+    </ul>
   )
 }

@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import { LuMail, LuMapPin, LuPhone } from 'react-icons/lu'
 import { FaFacebookF } from 'react-icons/fa6'
 import logo from '../assets/logo-footer.webp'
-import { business, navLinks, services } from '../data/site'
+import { business, navLinks, servicePath, services } from '../data/site'
 
 export default function Footer() {
   return (
@@ -38,18 +38,25 @@ export default function Footer() {
           </ul>
         </nav>
 
-        <div>
-          <h2 className="font-display text-lg tracking-wide uppercase">Services</h2>
+        <nav aria-labelledby="footer-services-title">
+          <h2 id="footer-services-title" className="font-display text-lg tracking-wide uppercase">
+            Services
+          </h2>
           <ul className="mt-4 space-y-2 text-sm text-white/75">
             {services.map((s) => (
-              <li key={s.id}>{s.title}</li>
+              <li key={s.id}>
+                <Link to={servicePath(s)} className="hover:text-mower transition-colors">
+                  {s.title}
+                </Link>
+              </li>
             ))}
           </ul>
-        </div>
+        </nav>
 
         <div>
           <h2 className="font-display text-lg tracking-wide uppercase">Get in touch</h2>
           <address className="mt-4 space-y-3 not-italic">
+            <p className="font-bold text-white">{business.name}</p>
             <p className="text-sm text-white/60">{business.owner}, Owner</p>
             <a href={business.phoneHref} className="hover:text-mower flex items-center gap-3 transition-colors">
               <LuPhone aria-hidden="true" className="text-mower" /> {business.phoneDisplay}
@@ -74,7 +81,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <p className="mx-auto max-w-6xl px-5 py-6 text-xs text-white/55 sm:px-8">
+        <p suppressHydrationWarning className="mx-auto max-w-6xl px-5 py-6 text-xs text-white/55 sm:px-8">
           &copy; {new Date().getFullYear()} {business.name}. Dallas, Texas.
         </p>
       </div>

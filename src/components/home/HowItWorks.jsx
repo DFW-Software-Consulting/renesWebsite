@@ -1,9 +1,10 @@
 import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
+import { motion, useScroll, useSpring, useTransform } from 'motion/react'
 import { LuClipboardCheck, LuPhoneCall, LuScissors, LuSun } from 'react-icons/lu'
 import Mower from '../Mower'
 import Reveal, { Eyebrow } from '../Reveal'
 import { steps } from '../../data/site'
+import { useReducedMotion } from '../../lib/hooks'
 
 const ICONS = [LuPhoneCall, LuClipboardCheck, LuScissors, LuSun]
 

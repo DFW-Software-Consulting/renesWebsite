@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import { AnimatePresence, MotionConfig } from 'motion/react'
 import { Toaster } from 'sonner'
@@ -8,12 +8,9 @@ import ScrollProgress from './components/ScrollProgress'
 import FloatingCall from './components/FloatingCall'
 import PageTransition from './components/PageTransition'
 import Home from './pages/Home'
-
-const loadAbout = () => import('./pages/About')
-const loadContact = () => import('./pages/Contact')
-const About = lazy(loadAbout)
-const Contact = lazy(loadContact)
-const NotFound = lazy(() => import('./pages/NotFound'))
+import { About, Contact, NotFound, ServicePage, ServicesOverview } from './pages'
+import { useMounted } from './lib/hooks'
+import { applyHead, getPageMeta } from './seo'
 
 function page(element) {
   return (
@@ -25,15 +22,23 @@ function page(element) {
 
 export default function App() {
   const location = useLocation()
+  const mounted = useMounted()
 
   // Warm the likely-next routes once the browser is idle.
   useEffect(() => {
     const idle = window.requestIdleCallback ?? ((cb) => setTimeout(cb, 1500))
     idle(() => {
-      loadAbout()
-      loadContact()
+      ServicesOverview.preload()
+      ServicePage.preload()
+      Contact.preload()
+      About.preload()
     })
   }, [])
+
+  // The prerendered HTML ships the right <head>; keep it in sync after client-side navigation.
+  useEffect(() => {
+    applyHead(getPageMeta(location.pathname))
+  }, [location.pathname])
 
   return (
     <MotionConfig reducedMotion="user">
@@ -50,6 +55,8 @@ export default function App() {
         <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo({ top: 0, behavior: 'instant' })}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={page(<Home />)} />
+            <Route path="/services" element={page(<ServicesOverview />)} />
+            <Route path="/services/:slug" element={page(<ServicePage />)} />
             <Route path="/about" element={page(<About />)} />
             <Route path="/contact" element={page(<Contact />)} />
             <Route path="*" element={page(<NotFound />)} />
@@ -59,7 +66,8 @@ export default function App() {
 
       <Footer />
       <FloatingCall />
-      <Toaster theme="dark" position="top-center" richColors closeButton />
+      {/* Client-only: toasts are never part of the prerendered HTML. */}
+      {mounted && <Toaster theme="dark" position="top-center" richColors closeButton />}
     </MotionConfig>
   )
 }

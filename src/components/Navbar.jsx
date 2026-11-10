@@ -12,7 +12,7 @@ function Brand() {
     <Link to="/" className="flex items-center gap-3 rounded-lg" aria-label={`${business.name}, home`}>
       <img src={logoMark} alt="" width="40" height="40" className="size-10 rounded-full ring-2 ring-white/20" />
       <span className="leading-none">
-        <span className="font-display block text-xl tracking-wide uppercase">Top Flight</span>
+        <span className="font-display block text-xl tracking-wide uppercase">Top Flight</span>{' '}
         <span className="block text-[0.65rem] font-bold tracking-[0.3em] text-white/70 uppercase">Lawn Services</span>
       </span>
     </Link>
@@ -82,7 +82,7 @@ export default function Navbar() {
           <ul className="flex items-center gap-1">
             {navLinks.map((l) => (
               <li key={l.to}>
-                <NavLink to={l.to} end className="relative block rounded-full px-4 py-2 text-sm font-bold tracking-wide uppercase">
+                <NavLink to={l.to} end={l.to === '/'} className="relative block rounded-full px-4 py-2 text-sm font-bold tracking-wide uppercase">
                   {({ isActive }) => (
                     <>
                       {isActive && (
@@ -161,7 +161,7 @@ export default function Navbar() {
                   >
                     <NavLink
                       to={l.to}
-                      end
+                      end={l.to === '/'}
                       className={({ isActive }) =>
                         `font-display block py-1 text-6xl uppercase ${isActive ? 'text-mower' : 'text-white'}`
                       }
