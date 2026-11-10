@@ -77,7 +77,8 @@ export default function Contact() {
       })
       toast.success('Message sent!', { description: `Thanks for reaching out. ${business.owner} will get back to you soon.` })
       formRef.current.reset()
-    } catch {
+    } catch (err) {
+      console.error('Contact form send failed:', err)
       toast.error('Your message did not send.', {
         description: `Please try again, or call ${business.phoneDisplay}.`,
       })
