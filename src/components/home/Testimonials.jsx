@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { LuArrowLeft, LuArrowRight, LuQuote } from 'react-icons/lu'
 import Reveal, { Eyebrow } from '../Reveal'
 import { testimonials } from '../../data/site'
 
 export default function Testimonials() {
   const [index, setIndex] = useState(0)
+  const reduce = useReducedMotion()
   const count = testimonials.length
-  const t = testimonials[index]
   const go = (d) => setIndex((i) => (i + d + count) % count)
 
   return (
@@ -33,35 +33,68 @@ export default function Testimonials() {
             <LuQuote className="size-20 sm:size-28" />
           </motion.div>
 
-          <div aria-live="polite" className="relative rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 backdrop-blur sm:p-14">
-            <AnimatePresence mode="wait">
-              <motion.figure
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <blockquote className="text-xl leading-relaxed font-medium text-white/90 sm:text-2xl sm:leading-relaxed">
-                  &ldquo;{t.quote}&rdquo;
-                </blockquote>
-                <figcaption className="mt-8 flex items-center gap-4">
-                  <span className="bg-mower font-display grid size-12 place-items-center rounded-full text-xl" aria-hidden="true">
-                    {t.name[0]}
-                  </span>
-                  <span>
-                    <span className="font-display block text-xl tracking-wide uppercase">{t.name}</span>
-                    <span className="text-sm text-white/60">Top Flight client</span>
-                  </span>
-                </figcaption>
-              </motion.figure>
-            </AnimatePresence>
+          <div
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Customer reviews"
+            aria-live="polite"
+            tabIndex={count > 1 ? 0 : undefined}
+            onKeyDown={(e) => {
+              if (count < 2) return
+              if (e.key === 'ArrowRight') go(1)
+              else if (e.key === 'ArrowLeft') go(-1)
+            }}
+            className="relative rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 backdrop-blur sm:p-14">
+            <div className="grid">
+              {testimonials.map((r, i) => {
+                const active = i === index
+                return (
+                  <motion.figure
+                    key={r.name}
+                    aria-hidden={!active || undefined}
+                    inert={!active}
+                    className="[grid-area:1/1]"
+                    initial={false}
+                    animate={{ opacity: active ? 1 : 0, y: active ? 0 : reduce ? 0 : 20, visibility: active ? 'visible' : 'hidden' }}
+                    transition={{
+                      duration: reduce ? 0.01 : 0.4,
+                      delay: active && !reduce ? 0.2 : 0,
+                      visibility: { delay: active ? 0 : reduce ? 0 : 0.4 },
+                    }}
+                  >
+                    <blockquote className="text-xl leading-relaxed font-medium text-white/90 sm:text-2xl sm:leading-relaxed">
+                      &ldquo;{r.quote}&rdquo;
+                    </blockquote>
+                    <figcaption className="mt-8 flex items-center gap-4">
+                      <span className="bg-mower font-display grid size-12 place-items-center rounded-full text-xl" aria-hidden="true">
+                        {r.name[0]}
+                      </span>
+                      <span>
+                        <span className="font-display block text-xl tracking-wide uppercase">{r.name}</span>
+                        <span className="text-sm text-white/60">{r.source || 'Top Flight client'}</span>
+                      </span>
+                    </figcaption>
+                  </motion.figure>
+                )
+              })}
+            </div>
 
             {count > 1 && (
               <div className="mt-8 flex items-center justify-end gap-3">
-                <span className="mr-auto text-sm text-white/60">
-                  {index + 1} / {count}
-                </span>
+                <div className="mr-auto flex items-center gap-2" role="group" aria-label="Choose review">
+                  {testimonials.map((r, i) => (
+                    <button
+                      key={r.name}
+                      type="button"
+                      onClick={() => setIndex(i)}
+                      aria-label={`Review ${i + 1} of ${count}: ${r.name}`}
+                      aria-current={i === index || undefined}
+                      className="grid size-6 place-items-center"
+                    >
+                      <span className={`h-2.5 rounded-full transition-all ${i === index ? 'bg-mower w-8' : 'w-2.5 bg-white/30'}`} />
+                    </button>
+                  ))}
+                </div>
                 <button
                   type="button"
                   onClick={() => go(-1)}

@@ -6,6 +6,7 @@ import logo from '../assets/logo-large.webp'
 import StripedD from '../components/StripedD'
 import Reveal, { Eyebrow } from '../components/Reveal'
 import CtaBand from '../components/home/CtaBand'
+import Gallery from '../components/home/Gallery'
 import { business, services } from '../data/site'
 
 const values = [
@@ -84,7 +85,8 @@ export default function About() {
           <Reveal>
             <p className="text-2xl leading-snug font-semibold text-white">
               {business.name} is a trusted and reliable local lawn service company that specializes in high-quality
-              lawn care for residential and commercial customers.
+              lawn care for residential and commercial customers. We offer high-quality lawn and home maintenance at the
+              best prices.
             </p>
           </Reveal>
           <Reveal delay={0.05}>
@@ -96,7 +98,7 @@ export default function About() {
           <Reveal delay={0.1}>
             <p>
               We offer a wide range of services, including lawn mowing, shrub and tree trimming, clean-ups and leaf
-              pick-up, gutter cleaning, weed control, and more.
+              pick-up, gutter cleaning, weed control, flowerbed clean-outs and mulch, and more.
             </p>
           </Reveal>
           <Reveal delay={0.15}>
@@ -117,6 +119,8 @@ export default function About() {
           </Reveal>
         </div>
       </section>
+
+      <Gallery />
 
       <section aria-labelledby="values-title" className="bg-ink-2 py-24">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">

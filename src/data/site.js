@@ -21,7 +21,7 @@ export const services = [
   {
     id: 'shrubs',
     title: 'Shrub Trimming',
-    blurb: 'Shaped, healthy shrubs and hedges that frame your property instead of taking it over.',
+    blurb: 'Shaped, healthy shrubs and hedges that frame your property instead of taking it over. Shrub and hedge removal available too.',
   },
   {
     id: 'trees',
@@ -43,6 +43,11 @@ export const services = [
     title: 'Weed Control',
     blurb: 'Keep weeds from crowding out your grass and beds.',
   },
+  {
+    id: 'flowerbeds',
+    title: 'Flowerbeds & Mulch',
+    blurb: 'Flowerbed clean-outs, fresh mulch, and weed/sheet barrier so your beds look sharp and stay that way.',
+  },
 ]
 
 export const steps = [
@@ -51,6 +56,8 @@ export const steps = [
   { title: 'We get to work', body: 'Mowing, trimming, and clean-up handled with care.' },
   { title: 'Enjoy your yard', body: 'Kick back. Your lawn looks top flight.' },
 ]
+
+export const tagline = 'High-quality lawn & home maintenance at the best prices'
 
 // Real, verified client reviews only. Add new ones to this array and the
 // spotlight section picks them up automatically (controls appear at 2+).
@@ -61,7 +68,20 @@ export const testimonials = [
     quote:
       "I recently hired the team at Top Flight Lawn Services to take care of my lawn, and I couldn't be happier with the results! The crew was professional, courteous, and efficient, and they did an amazing job transforming my patchy, weedy lawn into a lush, green oasis. And best of all, their prices are very competitive compared to other lawn care services in the area. I would highly recommend Top Flight Lawn Services to anyone looking for top-quality lawn care!",
   },
+  {
+    name: 'Jacob Rangel',
+    source: 'Facebook recommendation',
+    quote:
+      "Top flight lawn services literally live up to their name! Great work as well as service, took care of my grass and didn't leave any grass behind would recommend them to anybody! Hit these guys up for your next grass needs!",
+  },
 ]
+
+// Recent Work gallery. The section renders nothing while this is empty.
+// Fields: { src, alt, caption, before? } -- if `before` (image url) is set, the
+// item renders as a before/after slider with `before` and `src` as the "after".
+// Only real job photos belong here. Never stock images.
+// TODO(rene): real job photos from Facebook go here
+export const workPhotos = []
 
 // True facts only.
 export const trustBadges = ['Locally owned', 'Dallas-based', 'Free quotes', 'Residential & commercial']

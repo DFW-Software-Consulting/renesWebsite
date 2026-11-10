@@ -14,7 +14,10 @@ export default function CtaBand({ title = 'Ready for a top flight lawn?' }) {
           transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
         />
         <Reveal>
-          <h2 id="cta-title" className="font-display mx-auto max-w-4xl text-5xl leading-[0.92] text-white uppercase sm:text-8xl">
+          <p aria-hidden="true" className="font-script mb-3 -rotate-2 text-4xl leading-[1.4] text-white sm:text-5xl sm:leading-[1.4]">
+            Let&rsquo;s talk grass
+          </p>
+          <h2 id="cta-title" className="font-display mx-auto mt-2 max-w-4xl text-5xl leading-[0.92] text-white uppercase sm:text-8xl">
             {title}
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg font-semibold text-white">

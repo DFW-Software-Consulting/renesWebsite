@@ -126,8 +126,8 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.7 }}
         >
-          Mowing, trimming, clean-ups, gutters, and weed control for Dallas homes and businesses. Call us and get
-          a free quote.
+          High-quality lawn &amp; home maintenance at the best prices. Mowing, trimming, clean-ups, flowerbeds, and
+          more for Dallas homes and businesses. Call us for a free quote.
         </motion.p>
 
         <motion.div

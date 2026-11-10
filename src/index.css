@@ -2,6 +2,7 @@
 
 @theme {
   --font-display: 'Anton', 'Impact', 'Arial Narrow', sans-serif;
+  --font-script: 'Kaushan Script', 'Brush Script MT', cursive;
   --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
 
   --color-ink: #0a0a0a;
