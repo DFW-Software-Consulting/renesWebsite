@@ -8,7 +8,7 @@ import Reveal, { Eyebrow } from '../components/Reveal'
 import { business } from '../data/site'
 
 const EMAILJS = {
-  serviceId: 'service_0fdj2mx',
+  serviceId: 'service_yc58hva',
   templateId: 'template_s2t184g',
   publicKey: '_0eJeVE_0upDw61qU',
 }
