@@ -4,7 +4,12 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
+      eslint:
+        patterns: ["eslint", "@eslint/*", "eslint-plugin-*"]
       minor-and-patch:
         update-types: [minor, patch]
   - package-ecosystem: github-actions
